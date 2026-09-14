@@ -26,16 +26,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.manhngo.devhubapp.R
 
 @Composable
 fun DevHubTopBar(
     modifier: Modifier = Modifier,
     username: String = "guest",
+    avatarUrl: String? = null,
     isOnline: Boolean = true,
     onUserClick: () -> Unit = {},
     onLogoClick: () -> Unit = {}
@@ -116,23 +119,34 @@ fun DevHubTopBar(
 
                     Spacer(modifier = Modifier.width(10.dp))
 
-                    // Grey avatar circle with letter
-                    val avatarInitial = username.firstOrNull()?.uppercase() ?: "G"
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .background(
-                                color = Color(0xFF8E9BAE),
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = avatarInitial,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                    // Avatar: real image or circle with initial
+                    if (!avatarUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = avatarUrl,
+                            contentDescription = "Avatar",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
                         )
+                    } else {
+                        val avatarInitial = username.firstOrNull()?.uppercase() ?: "G"
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .background(
+                                    color = Color(0xFF8E9BAE),
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = avatarInitial,
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }

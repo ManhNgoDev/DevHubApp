@@ -14,3 +14,9 @@
 .cxx
 local.properties
 /.idea/deviceManager.xml
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+secrets.properties

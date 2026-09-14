@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,33 +48,70 @@ import com.manhngo.devhubapp.ui.components.DevHubTopBar
 import com.manhngo.devhubapp.ui.feature.ai.AIScreen
 import com.manhngo.devhubapp.ui.feature.git.GitScreen
 import com.manhngo.devhubapp.ui.feature.jobs.JobsScreen
+import android.content.Intent
+import androidx.activity.viewModels
+import com.manhngo.devhubapp.ui.feature.git.GitUiState
+import com.manhngo.devhubapp.ui.feature.git.GitViewModel
 import com.manhngo.devhubapp.ui.feature.news.NewsScreen
 import com.manhngo.devhubapp.ui.navigation.Screen
 import com.manhngo.devhubapp.ui.navigation.bottomNavItems
 import com.manhngo.devhubapp.ui.theme.DevHubAppTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val gitViewModel: GitViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        handleIntent(intent)
         setContent {
             DevHubAppTheme {
-                MainScreen()
+                MainScreen(gitViewModel = gitViewModel)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        val data = intent?.data ?: return
+        if (data.scheme == "devhub") {
+            val isCallback = (data.host == "oauth" && data.path == "/callback") ||
+                    (data.host == "oauth-callback")
+            if (isCallback) {
+                val code = data.getQueryParameter("code")
+                if (!code.isNullOrBlank()) {
+                    gitViewModel.handleAuthCode(code)
+                }
             }
         }
     }
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    gitViewModel: GitViewModel? = null
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+    val uiState = gitViewModel?.uiState?.collectAsState()?.value
+    val currentUser = (uiState as? GitUiState.Success)?.user
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            DevHubTopBar()
+            DevHubTopBar(
+                username = currentUser?.login ?: "guest",
+                avatarUrl = currentUser?.avatarUrl,
+                isOnline = currentUser != null
+            )
         },
         bottomBar = {
             Surface(
@@ -178,7 +216,7 @@ fun MainScreen() {
             startDestination = Screen.Git.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Git.route) { GitScreen() }
+            composable(Screen.Git.route) { GitScreen(viewModel = gitViewModel) }
             composable(Screen.News.route) { NewsScreen() }
             composable(Screen.AI.route) { AIScreen() }
             composable(Screen.Jobs.route) { JobsScreen() }
