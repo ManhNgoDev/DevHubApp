@@ -1,4 +1,4 @@
-package com.manhngo.devhubapp.ui.feature
+package com.manhngo.devhubapp.ui.feature.jobs
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
