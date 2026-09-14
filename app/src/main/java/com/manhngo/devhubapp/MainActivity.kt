@@ -43,11 +43,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.manhngo.devhubapp.ui.common.DevHubTopBar
-import com.manhngo.devhubapp.ui.feature.AIScreen
-import com.manhngo.devhubapp.ui.feature.GitScreen
-import com.manhngo.devhubapp.ui.feature.JobsScreen
-import com.manhngo.devhubapp.ui.feature.NewsScreen
+import com.manhngo.devhubapp.ui.components.DevHubTopBar
+import com.manhngo.devhubapp.ui.feature.ai.AIScreen
+import com.manhngo.devhubapp.ui.feature.git.GitScreen
+import com.manhngo.devhubapp.ui.feature.jobs.JobsScreen
+import com.manhngo.devhubapp.ui.feature.news.NewsScreen
 import com.manhngo.devhubapp.ui.navigation.Screen
 import com.manhngo.devhubapp.ui.navigation.bottomNavItems
 import com.manhngo.devhubapp.ui.theme.DevHubAppTheme

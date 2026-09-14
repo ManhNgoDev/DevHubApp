@@ -1,4 +1,4 @@
-package com.manhngo.devhubapp.ui.common
+package com.manhngo.devhubapp.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
